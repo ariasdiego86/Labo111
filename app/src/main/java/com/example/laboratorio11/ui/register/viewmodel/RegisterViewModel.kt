@@ -1,5 +1,6 @@
 package com.example.laboratorio11.ui.register.viewmodel
 
+import android.text.Spannable.Factory
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.laboratorio11.RetrofitApplication
 import com.example.laboratorio11.network.ApiResponse
 import com.example.laboratorio11.repository.CredentialsRepository
+import com.example.laboratorio11.ui.login.LoginUiStatus
 import com.example.laboratorio11.ui.register.RegisterUiStatus
 import kotlinx.coroutines.launch
 
@@ -24,11 +26,25 @@ class RegisterViewModel(private val repository: CredentialsRepository) : ViewMod
 
     private fun register(name: String, email: String, password: String) {
         // TODO: Create a coroutine to call the register function from the repository and inside the coroutine set the value of the status
+        viewModelScope.launch {
+            _status.postValue(
+                when (val response = repository.register(name, email, password)){
+                    is ApiResponse.Error -> RegisterUiStatus.Error(response.exception)
+                    is ApiResponse.ErrorWithMessage -> RegisterUiStatus.ErrorWithMessage(response.message)
+                    is ApiResponse.Success -> RegisterUiStatus.Success
+                }
+            )
+        }
 
     }
 
     fun onRegister() {
         // TODO: Validate the data and call the register function
+        if(!validateData()){
+            _status.value = RegisterUiStatus.ErrorWithMessage("Wrong Information")
+            return
+        }
+        register(name.value!!, email.value!!, password.value!!)
     }
 
     private fun validateData(): Boolean {
@@ -52,6 +68,9 @@ class RegisterViewModel(private val repository: CredentialsRepository) : ViewMod
 
     companion object {
         // TODO: Create a RegisterViewModel Factory
-
+        /*val Factory = viewModelFactory {
+            val app = this[APPLICATION_KEY] as RetrofitApplication
+            RegisterViewModel(app.credentialsRepository)
+        }*/
     }
 }

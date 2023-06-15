@@ -11,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.laboratorio11.R
+import com.example.laboratorio11.RetrofitApplication
 import com.example.laboratorio11.databinding.FragmentRegisterBinding
 import com.example.laboratorio11.ui.register.viewmodel.RegisterViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -19,9 +20,12 @@ import com.google.android.material.snackbar.Snackbar
 class RegisterFragment : Fragment() {
 
     // TODO: Declare the RegisterViewModel using the activityViewModels property delegate
-
-
     private lateinit var binding: FragmentRegisterBinding
+    private lateinit var registerViewModel: RegisterViewModel
+
+    val app by lazy {
+        requireActivity().application as RetrofitApplication
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,9 +41,37 @@ class RegisterFragment : Fragment() {
     }
 
     // TODO: Create a function to set the view model
-
+    private fun setRegister(){
+        binding.viewmodel = registerViewModel
+    }
 
     // TODO: Create a function to observe the status LiveData
+    private fun observeStatus(){
+        registerViewModel.status.observe(viewLifecycleOwner){status ->
+            handleUiStatus(status)
+        }
+    }
+
+    private fun handleUiStatus(status: RegisterUiStatus){
+        when(status){
+            is RegisterUiStatus.Error -> {
+                Toast.makeText(requireContext(), "An error has occurred", Toast.LENGTH_SHORT).show()
+            }
+
+            is RegisterUiStatus.ErrorWithMessage -> {
+                Toast.makeText(requireContext(), status.message, Toast.LENGTH_SHORT).show()
+            }
+
+            is RegisterUiStatus.Success -> {
+                registerViewModel.clearStatus()
+                registerViewModel.clearData()
+                app.getToken()
+                findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+
+            }
+            else -> {}
+        }
+    }
 
     /* TODO: Create a function to handle the status of the UI
         - If the status is an error, show a Toast with the message "An error has occurred"
