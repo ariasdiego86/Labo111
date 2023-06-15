@@ -22,6 +22,7 @@ class LoginFragment : Fragment() {
     // TODO: Declare the LoginViewModel using the activityViewModels property delegate
 
     private lateinit var binding: FragmentLoginBinding
+    private lateinit var loginViewModel: LoginViewModel
 
     val app by lazy {
         requireActivity().application as RetrofitApplication
@@ -39,10 +40,10 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // TODO: Uncomment
-        /*
+
         setViewModel()
         observeStatus()
-        */
+
 
         binding.registerBtn.setOnClickListener {
             it.findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
@@ -50,23 +51,23 @@ class LoginFragment : Fragment() {
     }
 
     // TODO: Create a function to set the view model
-    /*
+
     private fun setViewModel() {
         binding.viewmodel = loginViewModel
     }
-    */
+
 
     // TODO: Create a function to observe the status LiveData
-    /*
+
     private fun observeStatus() {
         loginViewModel.status.observe(viewLifecycleOwner) { status ->
             handleUiStatus(status)
         }
     }
-     */
+
 
     // TODO: Create a function to handle the UI status
-    /*
+
     private fun handleUiStatus(status: LoginUiStatus) {
         when(status) {
             is LoginUiStatus.Error -> {
@@ -85,6 +86,6 @@ class LoginFragment : Fragment() {
             else -> {}
         }
     }
-    */
+
 
 }
