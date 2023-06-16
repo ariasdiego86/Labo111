@@ -68,9 +68,11 @@ class RegisterViewModel(private val repository: CredentialsRepository) : ViewMod
 
     companion object {
         // TODO: Create a RegisterViewModel Factory
-        /*val Factory = viewModelFactory {
-            val app = this[APPLICATION_KEY] as RetrofitApplication
-            RegisterViewModel(app.credentialsRepository)
-        }*/
+        val Factory = viewModelFactory {
+                initializer {
+                    val app = this[APPLICATION_KEY] as RetrofitApplication
+                    RegisterViewModel(app.credentialsRepository)
+                }
+        }
     }
 }
